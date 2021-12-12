@@ -30,7 +30,21 @@ const Header = () => {
               </Link>
             </li>
         </ul>
+        {isAuth ? (
         <ul className="navbar-nav px-3">
+            <li className="nav-item text-nowrap">
+                <Link className="nav-link" to="/">
+                    {user?.email}
+                </Link>
+            </li>
+            <li className="nav-item text-nowrap">
+                <Link className="nav-link" to="/logout">
+                    Вихід
+                </Link>
+            </li>
+        </ul>
+        ):(
+          <ul className="navbar-nav px-3">
             <li className="nav-item text-nowrap">
                 <Link className="nav-link" to="/login">
                     Вхід
@@ -42,6 +56,7 @@ const Header = () => {
                 </Link>
             </li>
         </ul>
+        )}
 
         </div>
       </div>

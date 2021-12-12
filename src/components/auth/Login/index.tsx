@@ -1,7 +1,10 @@
-import { Form, FormikProvider, useFormik } from "formik";
-import {ILoginModel} from './types';
+import {useState} from 'react'
+import { Form, FormikProvider, FormikHelpers, useFormik } from "formik";
+import {ILoginModel, ILoginError} from './types';
 import {LoginSchema} from './validtion';
 import {InputGroup} from '../../common/InputGroup';
+import { useNavigate } from "react-router";
+import { useActions } from "../../../hooks/useActions";
 
 const LoginPage = () =>{
 
@@ -12,14 +15,29 @@ const LoginPage = () =>{
     }
 
 
-    const onHandleSubmit = (values: ILoginModel) =>{
-      const formData = new FormData();
-        Object.entries(values).forEach
-        (
-          ([key, value]) => formData.append(key, value)
-        );
-        console.log("Server Send data: " , formData)
-    }
+    const navigator = useNavigate();
+    const { LoginUser } = useActions();
+
+
+    const onHandleSubmit = async (values: ILoginModel, { setFieldError }: FormikHelpers<ILoginModel>) => {
+      try {
+        await LoginUser(values);
+        await navigator("/");
+
+      }
+      catch (errors) {
+        const serverErrors = errors as ILoginError;
+        const { password, invalid } = serverErrors;
+  
+        if (password !== undefined) {
+          setFieldError("password", password[0]);
+        }
+        
+        if (invalid !== undefined){
+          setFieldError("invalid", invalid[0]);
+        }
+      }
+    };
 
     const formik = useFormik({
         initialValues: initialValues,

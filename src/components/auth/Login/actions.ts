@@ -13,10 +13,12 @@ export interface ILoginResponse {
 
 export const LoginUser = (data: ILoginModel) => async (dispatch: Dispatch<AuthAction>) => {
         try {
-          const response = await http.post<ILoginResponse>("api/account/login", data);
-          const { token } = await response.data;
+          const response = await http.post<ILoginResponse>("api/auth/login", data);
+          const token = response.data.token;
           
+          console.log("tutochki", token)
           setAuthUserByToken(token, dispatch);
+          
           return Promise.resolve();
 
         } catch (err: any) {
@@ -33,23 +35,27 @@ export const LoginUser = (data: ILoginModel) => async (dispatch: Dispatch<AuthAc
         }
     }
 
+
 export const setAuthUserByToken = (token: string , dispatch: Dispatch<any>) => {
 
-  setAuthToken(token);
-  localStorage.token = token;
+    setAuthToken(token);
+    localStorage.token = token;
+    console.log("tuta", token)
+    const dataUser = jwt.decode(token, { json: true });
 
-  const dataUser = jwt.decode(token, { json: true });
-  const user: IUser = {
-    email: dataUser!.name,
-  };
+    console.log("tut", dataUser)
+
+    const user: IUser = {
+      email: dataUser!.email,
+    };
+    
+    dispatch({
+      type: AuthActionTypes.LOGIN_AUTH,
+      payload: user,
+    });
   
-  dispatch({
-    type: AuthActionTypes.LOGIN_AUTH_SUCCESS,
-    payload: user,
-  });
-
-
-}
+  
+  }
 
 export const LogoutUser = () => {
     return async (dispatch: Dispatch<AuthAction>) => {
