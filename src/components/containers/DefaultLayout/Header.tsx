@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom";
+
+import { useTypedSelector } from "../../../hooks/useTypedSelector";
+
 const Header = () => {
+  const {user, isAuth} = useTypedSelector((store) => store.auth);
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">

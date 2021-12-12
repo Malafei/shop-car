@@ -3,6 +3,8 @@ import {IRegisterModel} from './types';
 import {RegisterSchema} from './validtion';
 import {InputGroup} from '../../common/InputGroup';
 
+
+
 const RegiterPage = () =>{
 
 
@@ -15,6 +17,12 @@ const RegiterPage = () =>{
 
 
     const onHandleSubmit = (values: IRegisterModel) =>{
+      const formData = new FormData();
+      Object.entries(values).forEach
+      (
+          ([key, value]) => formData.append(key, value)
+      );
+      
         console.log("Server Send data: " , values)
     }
 

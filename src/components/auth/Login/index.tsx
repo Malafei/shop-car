@@ -13,7 +13,12 @@ const LoginPage = () =>{
 
 
     const onHandleSubmit = (values: ILoginModel) =>{
-        console.log("Server Send data: " , values)
+      const formData = new FormData();
+        Object.entries(values).forEach
+        (
+          ([key, value]) => formData.append(key, value)
+        );
+        console.log("Server Send data: " , formData)
     }
 
     const formik = useFormik({
