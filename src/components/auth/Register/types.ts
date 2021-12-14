@@ -1,17 +1,18 @@
 export interface IRegisterModel{
     email: string,
-    login: string,
+    name: string,
     password: string,
     confirmPassword: string
 }
 
+export interface RegisterState {
+    data: string,
+    isRegisterd:boolean,
+}
+
+
 export enum RegisterActionTypes {
-    REGISTER_START = "REGISTER_START",
     REGISTER_SUCCESS = "REGISTER_SUCCESS",
-  }
-  
-  export interface RegisterStartAction {
-    type: RegisterActionTypes.REGISTER_START;
   }
   
   export interface RegisterSuccessAction {
@@ -20,7 +21,16 @@ export enum RegisterActionTypes {
   }
   
   export type RegisterAction =
-    | RegisterStartAction
     | RegisterSuccessAction
   ;
+
+  export type RegisterError = {
+    email: Array<string>, 
+    password: Array<string>, 
+    confirmPassword: Array<string>, 
+  };
   
+  export type RegisterErrors = {
+    errors: RegisterError,
+    status: number, 
+  };

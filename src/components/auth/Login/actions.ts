@@ -7,17 +7,18 @@ import setAuthToken from '../../../helpers/setAuthToken';
 import { ILoginModel } from './types';
 
 export interface ILoginResponse {
-  token: string
+    access_token: string
+    //user: { email: string}
 }
 
 
 export const LoginUser = (data: ILoginModel) => async (dispatch: Dispatch<AuthAction>) => {
         try {
           const response = await http.post<ILoginResponse>("api/auth/login", data);
-          const token = response.data.token;
-          
-          console.log("tutochki", token)
-          setAuthUserByToken(token, dispatch);
+          const {access_token} = response.data;
+          //const user: IUser = { email: response.data.user.email};
+          console.log("response ", response.data)
+          setAuthUserByToken(access_token, dispatch);
           
           return Promise.resolve();
 
@@ -33,22 +34,19 @@ export const LoginUser = (data: ILoginModel) => async (dispatch: Dispatch<AuthAc
              return Promise.reject();
           
         }
-    }
+}
 
 
 export const setAuthUserByToken = (token: string , dispatch: Dispatch<any>) => {
 
-    setAuthToken(token);
-    localStorage.token = token;
-    console.log("tuta", token)
     const dataUser = jwt.decode(token, { json: true });
+    setAuthToken(token);
+    localStorage.access_token = token;
 
-    console.log("tut", dataUser)
+    console.log("local storage ", localStorage);
+    console.log("data", dataUser!.email)
 
-    const user: IUser = {
-      email: dataUser!.email,
-    };
-    
+    const user: IUser = { email: "panda"};
     dispatch({
       type: AuthActionTypes.LOGIN_AUTH,
       payload: user,
@@ -62,7 +60,7 @@ export const LogoutUser = () => {
         try {
           setAuthToken('');
             dispatch({ type: AuthActionTypes.LOGOUT_AUTH });
-            localStorage.removeItem('user')
+            localStorage.removeItem('access_token')
         } catch (error) {
             
         }

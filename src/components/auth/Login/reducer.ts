@@ -2,9 +2,7 @@ import { AuthState,  AuthAction, AuthActionTypes } from './types';
 
 
 const initialState: AuthState = {
-      user: {
-        email: ""
-      },
+      user: null,
       isAuth: false,
 };
 
@@ -15,7 +13,7 @@ export const authReducer = (state=initialState, action: AuthAction) : AuthState 
         return {
           ...state,
           isAuth: true,
-          user: { ...action.payload },
+          user: action.payload,
         };
 
       case AuthActionTypes.LOGOUT_AUTH:

@@ -1,6 +1,7 @@
 export interface ILoginModel{
     email: string,
-    password: string
+    password: string,
+    invalid: string
 }
 
 export enum AuthActionTypes {
@@ -12,7 +13,7 @@ export enum AuthActionTypes {
   }
   
   export interface AuthState {
-    user: IUser;
+    user: IUser|null;
     isAuth: boolean;
   }
   

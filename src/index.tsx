@@ -7,6 +7,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {store} from './store'
 import { Provider } from 'react-redux';
+import {setAuthUserByToken} from "./components/auth/Login/actions"
+
+
+
+
+let token = localStorage.access_token;
+if (token) {
+  setAuthUserByToken(token, store.dispatch);
+}
 
 ReactDOM.render(
   <Provider store={store}>

@@ -1,4 +1,3 @@
-import {useState} from 'react'
 import { Form, FormikProvider, FormikHelpers, useFormik } from "formik";
 import {ILoginModel, ILoginError} from './types';
 import {LoginSchema} from './validtion';
@@ -11,7 +10,8 @@ const LoginPage = () =>{
 
     const initialValues : ILoginModel={
         email: "",
-        password: ""
+        password: "",
+        invalid:""
     }
 
 
@@ -23,15 +23,16 @@ const LoginPage = () =>{
       try {
         await LoginUser(values);
         await navigator("/");
-
-      }
-      catch (errors) {
+      } catch (errors) {
         const serverErrors = errors as ILoginError;
         const { password, invalid } = serverErrors;
+        console.log("passwword", password);
+        console.log("invalid", invalid);
   
         if (password !== undefined) {
           setFieldError("password", password[0]);
         }
+        console.log(invalid.length);
         
         if (invalid !== undefined){
           setFieldError("invalid", invalid[0]);
