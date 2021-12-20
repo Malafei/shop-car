@@ -1,66 +1,60 @@
 import { Dispatch } from "react";
 import http from "../../../http_common";
-import { AuthAction, AuthActionTypes, ILoginErrors, IUser } from "./types";
+import { AuthAction, AuthActionTypes, ILoginErrors, IUser, ILoginResponse } from "./types";
 import jwt from "jsonwebtoken";
 import axios, { AxiosError } from "axios";
 import setAuthToken from '../../../helpers/setAuthToken';
 import { ILoginModel } from './types';
+import { isJSDocVariadicType, TokenClass } from "typescript";
 
-export interface ILoginResponse {
-    access_token: string
-    //user: { email: string}
-}
 
 
 export const LoginUser = (data: ILoginModel) => async (dispatch: Dispatch<AuthAction>) => {
         try {
-          const response = await http.post<ILoginResponse>("api/auth/login", data);
-          const {access_token} = response.data;
-          //const user: IUser = { email: response.data.user.email};
-          console.log("response ", response.data)
-          setAuthUserByToken(access_token, dispatch);
-          
-          return Promise.resolve();
+          const response = await http.post<ILoginResponse>("api/auth/login", data); // посилаєм форму на сервер і отримуєм результат
+          const {access_token} = response.data; //присвоюєм отриманий токен по інтерфейсу ILoginResponse
+          //const {user} = response.data;
+          //console.log(user);
 
+
+          setAuthUserByToken(access_token, dispatch); //передаєм токен і діспатч в окрему функцію 
+          
+          return Promise.resolve(); // повертаєм проміс
+          
         } catch (err: any) {
-            if (axios.isAxiosError(err)) {
-              const serverError = err as AxiosError<ILoginErrors>;
-              if (serverError && serverError.response) {
-                const { errors } = serverError.response.data;
-                return Promise.reject(errors);
-              }
+            if (axios.isAxiosError(err)) { // перевіряєм чи аксіос ловить помилки сервера
+                const serverError = err as AxiosError<ILoginErrors>; //присвоюєм їх
+
+                if (serverError && serverError.response) {
+                    const { errors } = serverError.response.data;
+                    return Promise.reject(errors); //повертаєм проміс з помилками
+                }
             }
             
-             return Promise.reject();
-          
+            return Promise.reject(); // якщо вони не в аксіосі повертаєм пустий хибний проміс
+            
         }
-}
+    }
+    
 
-
-export const setAuthUserByToken = (token: string , dispatch: Dispatch<any>) => {
-
-    const dataUser = jwt.decode(token, { json: true });
+export const setAuthUserByToken = (token: string, dispatch: Dispatch<any>) => {
+    localStorage.access_token = token; // кідаєм його в храніліще
     setAuthToken(token);
-    localStorage.access_token = token;
-
-    console.log("local storage ", localStorage);
-    console.log("data", dataUser!.email)
-
-    const user: IUser = { email: "panda"};
-    dispatch({
-      type: AuthActionTypes.LOGIN_AUTH,
-      payload: user,
-    });
-  
-  
-  }
+    const user = jwt.decode(token) as IUser; // декодуєм його для витягнення даних
+    dispatch({ // кідаєм в діспатч тип події і юзера
+        type: AuthActionTypes.LOGIN_AUTH, 
+        payload: {
+            email: user.email,
+        }
+    });  
+}
 
 export const LogoutUser = () => {
     return async (dispatch: Dispatch<AuthAction>) => {
         try {
-          setAuthToken('');
-            dispatch({ type: AuthActionTypes.LOGOUT_AUTH });
-            localStorage.removeItem('access_token')
+          setAuthToken(''); // знищуєм токен
+            dispatch({ type: AuthActionTypes.LOGOUT_AUTH }); //кідаєм в діспатч подію
+            localStorage.removeItem('access_token') // видаляєм токен з локал стореджа
         } catch (error) {
             
         }

@@ -21,7 +21,7 @@ export const authReducer = (state=initialState, action: AuthAction) : AuthState 
           ...state,
           isAuth: false,
           user: {
-            email: ""
+            email: "",
           },
         };
 

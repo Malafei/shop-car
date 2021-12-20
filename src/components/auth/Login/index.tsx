@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Form, FormikProvider, FormikHelpers, useFormik } from "formik";
 import {ILoginModel, ILoginError} from './types';
 import {LoginSchema} from './validtion';
 import {InputGroup} from '../../common/InputGroup';
 import { useNavigate } from "react-router";
 import { useActions } from "../../../hooks/useActions";
+import EclipseWidget from '../../common/eclipse';
+
 
 const LoginPage = () =>{
 
@@ -11,24 +14,26 @@ const LoginPage = () =>{
     const initialValues : ILoginModel={
         email: "",
         password: "",
-        invalid:""
+        invalid: "" 
     }
 
-
+    const [loading, setLoading] = useState<boolean>(false);
     const navigator = useNavigate();
     const { LoginUser } = useActions();
 
 
     const onHandleSubmit = async (values: ILoginModel, { setFieldError }: FormikHelpers<ILoginModel>) => {
       try {
-        await LoginUser(values);
-        await navigator("/");
-      } catch (errors) {
-        const serverErrors = errors as ILoginError;
+        setLoading(true); // починаєм загрузку
+        await LoginUser(values); // кідаєм дані в екшн
+        await navigator("/"); // переходим на головну
+        await setLoading(false); // закінчуєм загрузку
+      } 
+      catch (errors) {
+        setLoading(false); // закінчуєм хибну загрузку
+        const serverErrors = errors as ILoginError; 
         const { password, invalid } = serverErrors;
-        console.log("passwword", password);
-        console.log("invalid", invalid);
-  
+        
         if (password !== undefined) {
           setFieldError("password", password[0]);
         }
@@ -79,6 +84,8 @@ const LoginPage = () =>{
           </Form>
         </FormikProvider>
       </div>
+        <div className="col-3"></div>
+          {loading && <EclipseWidget />}
     </div>
   );
 }

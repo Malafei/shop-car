@@ -7,17 +7,22 @@ import { RegisterAction, RegisterActionTypes, RegisterErrors } from './types';
 
 export const RegisterUser = (data: FormData) => {return async (dispatch: Dispatch<RegisterAction>) => {
     try {
-        console.log("nachalo 11");
         const response = await http.post("api/auth/register", data, {headers: { "Content-Type": "multipart/form-data" },});
-        const token = await response.data.token;
-        console.log(response.data);
+        const {access_token} = response.data;
+
+        console.log("response ", response.data);
+        console.log("token ",access_token);
+
         dispatch({
           type: RegisterActionTypes.REGISTER_SUCCESS,
-          payload: token,
+          payload: access_token,
         });
 
-        setAuthUserByToken(token, dispatch);
-        return Promise.resolve( token );  
+        console.log("setadgs");
+        
+        setAuthUserByToken(access_token, dispatch);
+        console.log("setadgs 222");
+        return Promise.resolve(access_token);  
     }
     catch (err: any) {
         console.log("nachalo catch 23");

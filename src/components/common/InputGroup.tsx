@@ -6,7 +6,7 @@ interface InputGroupProps {
   field: string;
   touched?: boolean;
   placevalue: string;
-  type?: "text" | "email" | "password";
+  type?: "text" | "email" | "password" | "file"| "number" | "hidden";
   error?: null | string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }

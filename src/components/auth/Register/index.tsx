@@ -15,6 +15,7 @@ const RegiterPage = () =>{
     const initialValues : IRegisterModel={
         email: "",
         name: "",
+        photo: [],
         password: "",
         confirmPassword: ""
     }
@@ -23,9 +24,17 @@ const RegiterPage = () =>{
     const [loading, setLoading] = useState<boolean>(false);
     const navigator = useNavigate();
 
+    const [img, setImg] = useState<string>();
     const { RegisterUser } = useActions();
 
-      const onHandleSubmit = async (values: IRegisterModel, { setFieldError }: FormikHelpers<IRegisterModel>) =>{
+    const handleFileChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+      setFieldValue("photo", (e.target as any).files[0]);
+      const file = (e.target as any).files[0]
+      setImg( URL.createObjectURL(file));
+    }
+
+    const onHandleSubmit = async (values: IRegisterModel, { setFieldError }: FormikHelpers<IRegisterModel>) =>
+    {
       console.log("29")
       const formData = new FormData();
       Object.entries(values).forEach(([key, value]) =>
@@ -35,11 +44,13 @@ const RegiterPage = () =>{
       try {
         
         setLoading(true);
+        
         await RegisterUser(formData);
         await navigator("/");
         await setLoading(false);
 
-      } catch (err) {
+      }
+      catch (err) {
         setLoading(false);
         const serverErrors = err as RegisterError;
         const {email, password, confirmPassword} = serverErrors;
@@ -51,20 +62,29 @@ const RegiterPage = () =>{
           setFieldError("confirmPassword", confirmPassword[0]);
       }
     }
-    
+
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: RegisterSchema,
         onSubmit: onHandleSubmit
     })
 
-    const { errors, touched, handleChange, handleSubmit } = formik;
+    const { errors, touched, handleChange, handleSubmit, setFieldValue } = formik;
 
 
 
 
     return(
             <div className="row">
+              <div className="col-2">
+                {img && (
+                  <div className="card mt-5">
+                    <div className="card-body text-center">
+                      <img src={img} height='300px' alt="asdasd" />
+                    </div>
+                  </div>
+                )}
+              </div>
               <div className="col-md-6 offset-md-3">
                 <h1>Реєстрація на сайті</h1>
                 <FormikProvider value={formik}>
@@ -105,6 +125,16 @@ const RegiterPage = () =>{
                       touched={touched.confirmPassword}
                       error={errors.confirmPassword}
                       onChange={handleChange}
+                    />
+
+                    <InputGroup
+                      field="photo"
+                      label="Аватар"
+                      type="file"
+                      placevalue = "Виберіть фото"
+                      error={errors.photo}
+                      onChange={handleFileChange}
+                      touched={touched.photo}
                     />
         
                     <button type="submit" className="btn btn-success" disabled={loading}>

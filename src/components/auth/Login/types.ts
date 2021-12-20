@@ -11,6 +11,11 @@ export enum AuthActionTypes {
   export interface IUser {
       email: string,
   }
+
+  export interface ILoginResponse {
+    access_token: string,
+    user: IUser
+}
   
   export interface AuthState {
     user: IUser|null;
