@@ -35,20 +35,16 @@ const RegiterPage = () =>{
 
     const onHandleSubmit = async (values: IRegisterModel, { setFieldError }: FormikHelpers<IRegisterModel>) =>
     {
-      console.log("29")
+      //коментарі до коду в логінці
       const formData = new FormData();
       Object.entries(values).forEach(([key, value]) =>
         formData.append(key, value)
       );
-      console.log("34", formData);
       try {
-        
         setLoading(true);
-        
         await RegisterUser(formData);
         await navigator("/");
         await setLoading(false);
-
       }
       catch (err) {
         setLoading(false);

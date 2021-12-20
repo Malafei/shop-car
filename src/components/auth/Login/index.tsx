@@ -31,15 +31,15 @@ const LoginPage = () =>{
       } 
       catch (errors) {
         setLoading(false); // закінчуєм хибну загрузку
-        const serverErrors = errors as ILoginError; 
-        const { password, invalid } = serverErrors;
-        
-        if (password !== undefined) {
+        const serverErrors = errors as ILoginError; //витягуєм помилки згідно інтерфейсу ILoginError
+        const { password, invalid } = serverErrors; //створюєм змінні для перевірки
+
+        if (password !== undefined) { //перевіряємо чи є помилки для пароля
           setFieldError("password", password[0]);
         }
         console.log(invalid.length);
         
-        if (invalid !== undefined){
+        if (invalid !== undefined){ //перевіряємо чи є стороні помилки
           setFieldError("invalid", invalid[0]);
         }
       }
